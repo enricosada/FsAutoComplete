@@ -137,7 +137,7 @@ type Commands (serialize : Serializer) =
                     | NetCoreProjectJson -> checker.TryGetProjectJsonProjectOptions projectFileName
                     | NetCoreSdk -> checker.TryGetCoreProjectOptions projectFileName
                     | Net45 -> checker.TryGetProjectOptions (projectFileName, verbose)
-                    | Unsupported -> Failure (sprintf "File '%s' is not supported" projectFileName)
+                    | Unsupported -> checker.TryGetProjectOptions (projectFileName, verbose)
 
                 match options with
                 | Result.Failure error ->
