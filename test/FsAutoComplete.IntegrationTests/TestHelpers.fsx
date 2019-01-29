@@ -427,9 +427,9 @@ let writeNormalizedOutputWith additionalFn (fn: string) (s: string) =
                                "<absolute path removed>/FsAutoComplete.IntegrationTests/$1")
 
     // replace paths ending with whitespace with <absolute path removed>
-    lines.[i] <- Regex.Replace(lines.[i],
-                               sprintf "%s/.*?test/FsAutoComplete\.IntegrationTests/(.*?)\\s" driveLetterRegex,
-                               "<absolute path removed>/FsAutoComplete.IntegrationTests/$1 ")
+//    lines.[i] <- Regex.Replace(lines.[i],
+//                               sprintf "%s/.*?test/FsAutoComplete\.IntegrationTests/(.*?)\\s" driveLetterRegex,
+//                               "<absolute path removed>/FsAutoComplete.IntegrationTests/$1 ")
 
     // replace paths ending with ( with <absolute path removed>
     lines.[i] <- Regex.Replace(lines.[i],
