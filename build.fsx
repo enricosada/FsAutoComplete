@@ -75,8 +75,8 @@ let isTestSkipped cfg (fn: string) =
   | FSACRuntime.NET, _, "Linter", "Runner.fsx" ->
     Some "known failure. lint fails because a binding redirect over FParsec initializing FSharpLint "
   // stdio and http
-  | _, _, "ProjectCache", "Runner.fsx" ->
-    Some "fails, ref https://github.com/fsharp/FsAutoComplete/issues/198"
+//  | _, _, "ProjectCache", "Runner.fsx" ->
+//    Some "fails, ref https://github.com/fsharp/FsAutoComplete/issues/198"
   | AnyNetcoreRuntime, _, "DotNetCoreCrossgenWithNetFx", "Runner.fsx" ->
     Some "DotnetCore (sdk 1.0) tests cannot specify the dotnet sdk to use (1.0), and wrongly fallback to 2.0 in tests because is the one running FSAC. related to https://github.com/fsharp/FsAutoComplete/issues/213"
   | _, _, "DotNetCoreCrossgenWithNetFx", "Runner.fsx"
@@ -85,9 +85,9 @@ let isTestSkipped cfg (fn: string) =
     | true, _ -> None //always run it on windows
     | false, "1" -> None //force run on mono
     | false, _ -> Some "not supported on this mono version" //by default skipped on mono
-  | _, _, "DotNetSdk2.0", "InvalidProjectFileRunner.fsx"
-  | _, _, "OldSdk", "InvalidProjectFileRunner.fsx" when not(isWindows) ->
-    Some "the regex to normalize output fails. mono/.net divergence?" //by default skipped on mono
+//  | _, _, "DotNetSdk2.0", "InvalidProjectFileRunner.fsx"
+//  | _, _, "OldSdk", "InvalidProjectFileRunner.fsx" when not(isWindows) ->
+//    Some "the regex to normalize output fails. mono/.net divergence?" //by default skipped on mono
   // http
   | _, HttpMode, "RobustCommands", "NoSuchCommandRunner.fsx" ->
     Some "invalid command is 404 in http"
@@ -191,6 +191,19 @@ let applyPaketLoadScriptWorkaround paketLoadScript =
     |> Array.iter (trace)
     trace "applied workaround"
 
+let listAll cfg =
+  let willRun, willSkip =
+    integrationTests
+    |> Seq.map (fun test -> test, isTestSkipped cfg test)
+    |> List.ofSeq
+    |> List.partition (fun (test, skipped) -> match skipped with
+                                              | Some txt -> false
+                                              | None -> true)
+
+  printfn "=== Tests to Run ==="
+  for (testName, _msg) in willRun do
+    printfn "\t%s" testName
+
 let runall cfg =
 
     trace "Cleanup test dir (git clean)..."
@@ -237,22 +250,30 @@ let runall cfg =
 
 Target "IntegrationTestStdioMode" (fun _ ->
   trace "== Integration tests (stdio/net) =="
-  runall { Mode = StdioMode; Runtime = NET }
+  let cfg = { Mode = StdioMode; Runtime = NET }
+  listAll cfg
+  runall cfg
 )
 
 Target "IntegrationTestHttpMode" (fun _ ->
   trace "== Integration tests (http/net) =="
-  runall { Mode = HttpMode; Runtime = NET }
+  let cfg = { Mode = HttpMode; Runtime = NET }
+  listAll cfg
+  runall cfg
 )
 
 Target "IntegrationTestStdioModeNetCore" (fun _ ->
   trace "== Integration tests (stdio/netcore) =="
-  runall { Mode = StdioMode; Runtime = NETCoreFDD }
+  let cfg = { Mode = StdioMode; Runtime = NETCoreFDD }
+  listAll cfg
+  runall cfg
 )
 
 Target "IntegrationTestHttpModeNetCore" (fun _ ->
   trace "== Integration tests (http/netcore) =="
-  runall { Mode = HttpMode; Runtime = NETCoreFDD }
+  let cfg = { Mode = HttpMode; Runtime = NETCoreFDD }
+  listAll cfg
+  runall cfg
 )
 
 // Target "UnitTest" (fun _ ->
@@ -367,9 +388,9 @@ Target "All" id
 "IntegrationTest" ==> "Test"
 
 "IntegrationTestStdioMode" ==> "IntegrationTest"
-// "IntegrationTestHttpMode" ==> "IntegrationTest"
-"IntegrationTestStdioModeNetCore" =?> ("IntegrationTest", ((environVar "FSAC_TESTSUITE_NETCORE_MODE_STDIO") <> "0"))
-// "IntegrationTestHttpModeNetCore" =?> ("IntegrationTest", ((environVar "FSAC_TESTSUITE_NETCORE_MODE_HTTP") <> "0"))
+"IntegrationTestHttpMode" ==> "IntegrationTest"
+"IntegrationTestStdioModeNetCore" ==> "IntegrationTest"
+"IntegrationTestHttpModeNetCore" ==> "IntegrationTest"
 
 "BuildDebug" ==> "All"
 "Test" ==> "All"
