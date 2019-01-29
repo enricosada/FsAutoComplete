@@ -70,13 +70,9 @@ let isTestSkipped cfg (fn: string) =
   let msbuildToolsVersion4Installed = (environVar "FSAC_TESTSUITE_MSBUILD_TOOLSVERSION_4_INSTALLED") = "1"
 
   match cfg.Runtime, cfg.Mode, dir, file with
-  // known failure. lint fails because a binding redirect over FParsec initializing FSharpLint
-  | FSACRuntime.NET, _, "LinterWithOptions", "Runner.fsx"
-  | FSACRuntime.NET, _, "Linter", "Runner.fsx" ->
-    Some "known failure. lint fails because a binding redirect over FParsec initializing FSharpLint "
   // stdio and http
-//  | _, _, "ProjectCache", "Runner.fsx" ->
-//    Some "fails, ref https://github.com/fsharp/FsAutoComplete/issues/198"
+  | _, _, "ProjectCache", "Runner.fsx" ->
+    Some "fails, ref https://github.com/fsharp/FsAutoComplete/issues/198"
   | AnyNetcoreRuntime, _, "DotNetCoreCrossgenWithNetFx", "Runner.fsx" ->
     Some "DotnetCore (sdk 1.0) tests cannot specify the dotnet sdk to use (1.0), and wrongly fallback to 2.0 in tests because is the one running FSAC. related to https://github.com/fsharp/FsAutoComplete/issues/213"
   | _, _, "DotNetCoreCrossgenWithNetFx", "Runner.fsx"
@@ -86,8 +82,8 @@ let isTestSkipped cfg (fn: string) =
     | false, "1" -> None //force run on mono
     | false, _ -> Some "not supported on this mono version" //by default skipped on mono
 //  | _, _, "DotNetSdk2.0", "InvalidProjectFileRunner.fsx"
-//  | _, _, "OldSdk", "InvalidProjectFileRunner.fsx" when not(isWindows) ->
-//    Some "the regex to normalize output fails. mono/.net divergence?" //by default skipped on mono
+  | AnyNetcoreRuntime, _, "OldSdk", "InvalidProjectFileRunner.fsx" when not(isWindows) ->
+    Some "the regex to normalize output fails. mono/.net divergence?" //by default skipped on mono
   // http
   | _, HttpMode, "RobustCommands", "NoSuchCommandRunner.fsx" ->
     Some "invalid command is 404 in http"
