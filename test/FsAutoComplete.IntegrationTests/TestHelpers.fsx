@@ -402,6 +402,10 @@ type FsAutoCompleteWrapper = FsAutoCompleteWrapperHttp
 type FsAutoCompleteWrapper = FsAutoCompleteWrapperStdio
 #endif
 
+let stripPackagesDir =
+  let r = Regex("../../../packages/integrationtests/.*/(?<dllname>.*)\.dll")
+  fun (s: string) -> r.Replace(s, "<absolute path removed>/$1.dll")
+
 let writeNormalizedOutputWith additionalFn (fn: string) (s: string) =
 
   let driveLetterRegex = if Path.DirectorySeparatorChar  = '/' then "" else "[a-zA-Z]:"
@@ -430,6 +434,9 @@ let writeNormalizedOutputWith additionalFn (fn: string) (s: string) =
     lines.[i] <- Regex.Replace(lines.[i],
                                sprintf "%s/.*?test/FsAutoComplete\.IntegrationTests/(.*?)\s" driveLetterRegex,
                                "<absolute path removed>/FsAutoComplete.IntegrationTests/$1 ")
+
+    // replace dll paths that come from the integrationtests packages directory
+    lines.[i] <- stripPackagesDir lines.[i]
 
     // replace paths ending with ( with <absolute path removed>
     lines.[i] <- Regex.Replace(lines.[i],
