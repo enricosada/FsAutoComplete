@@ -104,9 +104,6 @@ let isTestSkipped cfg (fn: string) =
     Some "DotnetCore (sdk 1.0) tests cannot specify the dotnet sdk to use (1.0), and wrongly fallback to 2.0 in tests because is the one running FSAC. related to https://github.com/fsharp/FsAutoComplete/issues/213"
   | AnyNetcoreRuntime, _, "NoFSharpCoreReference", "Runner.fsx" ->
     Some "know failure, the FSharp.Core is not added if not in the fsc args list"
-  // fsproj in test suite use ToolsVersion 4 (VS2010) and is not always installed
-  | _, _, "UncompiledReferencedProjects", "Runner.fsx" when not(msbuildToolsVersion4Installed) ->
-    Some "The test use old fsproj, and msbuild tools version 4 is not installed"
   // by default others are enabled
   | _ -> None
 
