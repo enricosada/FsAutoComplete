@@ -403,8 +403,8 @@ type FsAutoCompleteWrapper = FsAutoCompleteWrapperStdio
 #endif
 
 let stripPackagesDir =
-  let r = Regex("../../../packages/integrationtests/.*/(?<dllname>.*)\.dll")
-  fun (s: string) -> r.Replace(s, "<absolute path removed>/$1.dll")
+  let r = Regex("(..\/)*packages\/integrationtests\/.*\/(?<dllname>.*)\.dll")
+  fun (s: string) -> r.Replace(s, "<absolute path removed>/$2.dll")
 
 let writeNormalizedOutputWith additionalFn (fn: string) (s: string) =
 

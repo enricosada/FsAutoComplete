@@ -105,7 +105,6 @@ let isTestSkipped cfg (fn: string) =
   | AnyNetcoreRuntime, _, "NoFSharpCoreReference", "Runner.fsx" ->
     Some "know failure, the FSharp.Core is not added if not in the fsc args list"
   // fsproj in test suite use ToolsVersion 4 (VS2010) and is not always installed
-  | _, _, "MultiProj", "MultiProjRunner.fsx"
   | _, _, "MultipleUnsavedFiles", "multunsavedRunner.fsx"
   | _, _, "ParamCompletion", "ParamCompletionRunner.fsx"
   | _, _, "ProjectReload", "Runner.fsx"
