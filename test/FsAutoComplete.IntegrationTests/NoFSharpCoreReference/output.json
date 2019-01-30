@@ -29,3 +29,4 @@
   "Kind": "info",
   "Data": "quitting..."
 }
+Failed to parse file: <absolute path removed>/FsAutoComplete.IntegrationTests/NoFSharpCoreReference/Program.fsFailed to parse file: /Users/chethusk/oss/FsAutoComplete/test/FsAutoComplete.IntegrationTests/NoFSharpCoreReference/FileTwo.fs

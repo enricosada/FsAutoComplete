@@ -37,3 +37,4 @@
   "Kind": "info",
   "Data": "quitting..."
 }
+Failed to parse file: <absolute path removed>/FsAutoComplete.IntegrationTests/RobustCommands/Project/Program.fsFailed to parse file: /Users/chethusk/oss/FsAutoComplete/test/FsAutoComplete.IntegrationTests/RobustCommands/Project/FileTwo.fs
