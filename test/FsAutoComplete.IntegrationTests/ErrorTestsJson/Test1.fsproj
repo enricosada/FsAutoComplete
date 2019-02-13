@@ -50,7 +50,6 @@
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileTwo.fs" />
