@@ -1,0 +1,11 @@
+fsdn "('a -> 'b) -> 'a list -> 'b list"
+
+
+{
+    "Kind": "fsdn",
+    "Data": {
+        "Results": [
+            { "Function": "List.map" }
+        ]
+    }
+}

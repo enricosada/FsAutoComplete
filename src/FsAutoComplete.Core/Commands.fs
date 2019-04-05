@@ -12,6 +12,8 @@ open Utils
 open System.Reflection
 open FSharp.Compiler.Range
 open FSharp.Analyzers
+open FSharp.Data
+open FSharp.Data.JsonExtensions
 
 module Response = CommandResponse
 
@@ -34,6 +36,41 @@ type Commands (serialize : Serializer) =
     let mutable lastVersionChecked = -1
 
     let notify = Event<NotificationEvent>()
+
+    let fsdn (querystr:string) =
+        
+        let queryString =
+            [ "query=" + querystr
+              "exclusion="
+              "respect_name_difference=enabled"
+              "greedy_matching=enabled"
+              "ignore_parameter_style=enabled"
+              "ignore_case=enabled"
+              "substring=enabled"
+              "swap_order=enabled"
+              "complement=enabled"
+              "language=fsharp"
+              "single_letter_as_variable=enabled"
+              "limit=500"
+            ]
+            |> String.concat "&"
+
+        let req = Http.RequestString( "https://fsdn.azurewebsites.net/api/search?" + queryString )
+        let info = JsonValue.Parse(req)
+
+        let values = info?values.AsArray()
+        let v = values |> Array.head
+        let d = v?api?name?id.AsString()
+
+        let info2 = v?api?name
+        //return a list of strings
+
+        let infonamespace = info2?``namespace``.AsString()
+        let infoclass = info2?class_name.AsString()
+        let infomethod = info2?id.AsString()
+        let finalresp = infonamespace + infoclass + infomethod
+
+        [ finalresp ]
 
     let rec backgroundChecker () =
         async {
@@ -328,6 +365,11 @@ type Commands (serialize : Serializer) =
         }
 
         (opts.ProjectFileName, cached)
+
+    member x.Fsdn () = async {
+            printfn "hi! tried to do fsdn from commands"
+            return fsdn "int -> int"
+        }
 
     member x.Project projectFileName verbose onChange = async {
         let projectFileName = Path.GetFullPath projectFileName

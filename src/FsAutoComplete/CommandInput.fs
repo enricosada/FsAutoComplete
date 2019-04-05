@@ -40,6 +40,7 @@ type Command =
   | RegisterAnalyzer of string
   | Started
   | Quit
+  | Fsdn
 
 module CommandInput =
   /// Parse 'quit' command
@@ -216,13 +217,18 @@ module CommandInput =
   // Parses always and returns default error message
   let error = parser { return Error("Unknown command or wrong arguments") }
 
+  let fsdn = parser {
+    let! _ = string "fsdn"
+    return Fsdn
+    }
+
   // Parse any of the supported commands
   let parseCommand inputString =
     match inputString with
     | null -> Quit
     | input ->
       let reader = Parsing.createForwardStringReader input 0
-      let cmds = compilerlocation <|> helptext <|> declarations <|> lint <|> registerAnalyzer <|> unusedDeclarations <|> simplifiedNames <|> unusedOpens <|> parse <|> project <|> completionTipOrDecl <|> quit <|> colorizations <|> workspacePeek <|> workspaceLoad <|> error
+      let cmds = compilerlocation <|> helptext <|> declarations <|> lint <|> registerAnalyzer <|> unusedDeclarations <|> simplifiedNames <|> unusedOpens <|> parse <|> project <|> completionTipOrDecl <|> quit <|> colorizations <|> workspacePeek <|> workspaceLoad <|> fsdn <|> error
       let cmd = reader |> Parsing.getFirst cmds
       match cmd with
       | Parse (filename,kind,_) ->
